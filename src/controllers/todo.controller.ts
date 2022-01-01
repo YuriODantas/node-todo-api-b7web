@@ -14,11 +14,38 @@ export const add = async (req: Request, res: Response) => {
     });
     res.status(201).json({ item: newTodo });
   }
-  res.status(400).json({ error: "Dados não enviados" });
+  res.json({ error: "Dados não enviados" });
 };
 
-export const update = async () => {
+export const update = async (req: Request, res: Response) => {
+  const id: string = req.params.id;
 
+  let todo = await Todo.findByPk(id);
+  if(todo){
+
+    if(req.body.title) {
+      todo.title = req.body.title;
+    }
+
+    if(req.body.done) {
+      switch(req.body.done.toLowerCase()) {
+        case 'true':
+          case '1':
+            todo.done = true;
+            break;
+        case 'false':
+          case '0':
+            todo.done = false;
+            break;
+      }
+    } 
+
+    await todo.save();
+    res.status(200).json({ item: todo });
+    
+  } else {
+    res.json({ error: "Item não encontrado!" })
+  }
 };
 
 export const remove = async () => {
