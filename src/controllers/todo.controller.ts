@@ -48,6 +48,12 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
-export const remove = async () => {
-
+export const remove = async (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  let todo = await Todo.findByPk(id);
+  if(todo){
+    await todo.destroy()
+    res.json({ message: "Item apagado com sucesso!" })
+  }
+  res.status(404).json({ error: "Item não encontrado!" })
 };
